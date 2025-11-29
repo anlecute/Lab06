@@ -102,10 +102,12 @@
     <h1>📚 Student Management System</h1>
     <p class="subtitle">MVC Pattern with Jakarta EE & JSTL</p>
 
-    <!-- Add New Student -->
-    <div class="mb-20">
-        <a href="student?action=new" class="btn btn-primary">➕ Add New Student</a>
-    </div>
+    <!-- Add New Student - Only Admin -->
+    <c:if test="${sessionScope.role eq 'admin'}">
+        <div class="mb-20">
+            <a href="student?action=new" class="btn btn-primary">➕ Add New Student</a>
+        </div>
+    </c:if>
 
     <!-- SEARCH FORM -->
     <div class="search-box">
@@ -113,9 +115,11 @@
             <input type="hidden" name="action" value="search">
             <input type="text" name="keyword" placeholder="Search students..." value="${keyword}">
             <button type="submit" class="btn btn-search">🔎 Search</button>
-
-            <c:if test="${not empty keyword}">
-                <a href="student?action=list" class="btn btn-secondary">❌ Clear</a>
+            
+            <c:if test="${not empty param.error}">
+                <div class="alert alert-error">
+                    ❌ ${param.error}
+                </div>
             </c:if>
         </form>
     </div>
@@ -184,9 +188,14 @@
                 <td>${student.email}</td>
                 <td>${student.major}</td>
                 <td>
-                    <a href="student?action=edit&id=${student.id}" class="btn btn-secondary">✏️ Edit</a>
-                    <a href="student?action=delete&id=${student.id}" class="btn btn-danger"
-                       onclick="return confirm('Are you sure?')">🗑️ Delete</a>
+                    <c:if test="${sessionScope.role eq 'admin'}">
+                        <a href="student?action=edit&id=${student.id}" class="btn btn-secondary">✏️ Edit</a>
+                        <a href="student?action=delete&id=${student.id}" class="btn btn-danger"
+                           onclick="return confirm('Are you sure?')">🗑️ Delete</a>
+                    </c:if>
+                    <c:if test="${sessionScope.role ne 'admin'}">
+                        <span style="color: #999; font-style: italic;">View Only</span>
+                    </c:if>
                 </td>
             </tr>
         </c:forEach>
